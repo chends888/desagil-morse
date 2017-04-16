@@ -20,6 +20,9 @@ android {
     lintOptions {
         abortOnError false
     }
+    sourceSets {
+        main.java.srcDirs += 'src/main/java/br/pro/hashi/ensino/desagil/morse'
+    }
 }
 
 dependencies {
