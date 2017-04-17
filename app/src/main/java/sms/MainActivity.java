@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 toast.show();
             }
             else {
-                goToSendActivity();
+                sendSMS();
             }
         }
     }
