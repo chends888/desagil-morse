@@ -45,18 +45,25 @@ public class SendActivity extends AppCompatActivity {
         lvOpcoes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                switch (position){
-                    case 0: navegarInternet();
-                        break;
-                    case 1: fazerLigacao();
-                        break;
-                    case 2: exibirSobre();
-                        break;
-                    case 3: finish();
-                        break;
-                }
+            switch (position){
+                case 0: handleListItemClick("Olá");
+                    break;
+                case 1: handleListItemClick("Olá");
+                    break;
+                case 2: handleListItemClick("Olá");
+                    break;
+                case 3: handleListItemClick("Olá");
+                    break;
+            }
             }
         });
+    }
+
+    private void handleListItemClick(String messageParam) {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("message",messageParam);
+        startActivity(intent);
+        finish();
     }
 
     private void exibirSobre() {
