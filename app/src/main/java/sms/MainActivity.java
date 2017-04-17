@@ -14,6 +14,8 @@ import android.view.View;
 import android.widget.Toast;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.telephony.SmsManager;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -22,6 +24,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
     private Button morse_pad;
     private EditText message;
+    private TextView phone_number;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
         morse_pad = (Button) findViewById(R.id.morse_pad);
         message = (EditText) findViewById(R.id.message);
+        phone_number = (TextView) findViewById(R.id.phone_number);
         morse_pad.setOnTouchListener(this);
 
         // Se há uma mensagem padrão selecionada
@@ -42,6 +46,9 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     @Override
     public boolean onTouch(View arg0, MotionEvent arg1) {
         final Timer timer = new Timer();
+
+        // Timeout para descobrir se usuário segurou o morse_pad por 2 segundos
+        // Se sim, abra a view de default_messages
         switch ( arg1.getAction() ) {
             case MotionEvent.ACTION_DOWN:
                 //start timer
@@ -50,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                     public void run() {
                         showMessages();
                     }
-                }, 2000); //time out 5s
+                }, 2000);
                 return true;
             case MotionEvent.ACTION_UP:
                 //stop timer
@@ -78,12 +85,29 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         finish();
     }
 
+    public void sendSMS() {
+        String to = phone_number.getText().toString();
+        String message = this.message.getText().toString();
 
-    public void tryToGoToSendActivity(View view) {
+        SmsManager manager = SmsManager.getDefault();
+        try {
+            manager.sendTextMessage(to, null, message, null, null);
+
+            Toast toast = Toast.makeText(this, "Messagem enviada!", Toast.LENGTH_SHORT);
+            toast.show();
+        }
+        catch(IllegalArgumentException exception) {
+            Log.e("SendActivity", "number or message empty");
+        }
+    }
+
+
+    public void tryToSendSMS(View view) {
+
         int permission = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.SEND_SMS);
 
         if(permission == PackageManager.PERMISSION_GRANTED) {
-            goToSendActivity();
+            sendSMS();
         }
         else {
             String[] permissions = new String[1];

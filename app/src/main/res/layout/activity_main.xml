@@ -31,7 +31,7 @@
         android:layout_alignParentStart="true"
         android:textColor="#000"
         android:textSize="25dp"
-        android:id="@+id/textView2" />
+        android:id="@+id/phone_number" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -72,14 +72,17 @@
         />
 
     <Button
-        android:text="Enviar"
+        android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="151dp"
-        android:height="20dp"
-        android:id="@+id/button"
-        android:background="@android:drawable/radiobutton_off_background" />
+        android:width="40dp"
+        android:height="30dp"
+        android:onClick="tryToSendSMS"
+        android:text="Enviar"
+        android:textColor="#fff"
+        android:backgroundTint="@color/colorPrimary"/>
 
 </RelativeLayout>
