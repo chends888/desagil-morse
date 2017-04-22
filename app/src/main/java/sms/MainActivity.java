@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
     // Timer related
     private long timeSpan;
+    private MorseCoder morseCoder;
 
     private String sentence;
     private String currentCharacter;
@@ -40,7 +41,9 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        // Inicializa o conversor e as variaveis romanas
+        morseCoder = new MorseCoder();
+        morseCoder.inOrderPrint();
         sentence = "";
         currentCharacter = "";
 
@@ -67,6 +70,10 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             long secondsElapsed = TimeUnit.SECONDS.convert(timeSpan, TimeUnit.SECONDS);
             //handleTimeSpan(secondsElapsed);
             handleTimeSpan(300);
+            handleTimeSpan(200);
+            handleTimeSpan(200);
+            handleTimeSpan(200);
+            handleTimeSpan(600);
         }
 
         return false;
@@ -76,9 +83,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         if (span > MorseTimeSpan.WORD.getTime()){
             sentence = sentence.concat(" ");
         } else if (span > MorseTimeSpan.CHARACTER.getTime()) {
-            // Chamada da funcao do ruhman
-            Log.d("Converter para romano", currentCharacter);
-            String character = "a";
+            String character = morseCoder.decode(currentCharacter);
             sentence = sentence.concat(character);
         } else if (span > MorseTimeSpan.TRACO.getTime()) {
             currentCharacter = currentCharacter.concat("-");
@@ -86,7 +91,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             currentCharacter = currentCharacter.concat(".");
         }
 
-        Log.d("char", currentCharacter);
+        // Precisa ser um "b"
+        Log.d("char", sentence);
     }
 
     // Adiciona a mensagem padrão ao nosso formulário
