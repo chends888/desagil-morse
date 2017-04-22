@@ -20,6 +20,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
+
 public class MainActivity extends AppCompatActivity implements View.OnTouchListener{
     private static final int REQUEST_EXAMPLE = 0;
 
@@ -29,9 +30,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
 
     // Timer related
-    private int nextWordTimeout = 1000;
-    private int nextCharacterTimeout = 500;
-    private int tracoTimeout = 200;
     private long timeSpan;
 
     private String sentence;
@@ -62,32 +60,32 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
         if (arg1.getAction() == MotionEvent.ACTION_DOWN) {
             timeSpan = System.nanoTime();
-        } else if (arg1.getAction() == MotionEvent.ACTION_UP){
+        } else if (arg1.getAction() == MotionEvent.ACTION_UP) {
             // TODO: nao consigo extrair um valor que faça sentido desse timeSpan. O conversor
             // não devolve um valor significativo no simulator
             timeSpan = (System.nanoTime() - timeSpan);
             long secondsElapsed = TimeUnit.SECONDS.convert(timeSpan, TimeUnit.SECONDS);
-            handleTimeSpan(secondsElapsed);
+            //handleTimeSpan(secondsElapsed);
+            handleTimeSpan(300);
         }
 
         return false;
     }
 
     private void handleTimeSpan(long span) {
-        if (span > nextWordTimeout){
-            sentence.concat(" ");
-        } else if (span > nextCharacterTimeout) {
+        if (span > MorseTimeSpan.WORD.getTime()){
+            sentence = sentence.concat(" ");
+        } else if (span > MorseTimeSpan.CHARACTER.getTime()) {
             // Chamada da funcao do ruhman
-            Log.d("Converter para romano:", currentCharacter);
+            Log.d("Converter para romano", currentCharacter);
             String character = "a";
-            sentence.concat(character);
-        } else if (span > tracoTimeout) {
-            currentCharacter.concat("-");
+            sentence = sentence.concat(character);
+        } else if (span > MorseTimeSpan.TRACO.getTime()) {
+            currentCharacter = currentCharacter.concat("-");
         } else { // dot
-            currentCharacter.concat(".");
+            currentCharacter = currentCharacter.concat(".");
         }
 
-        Log.d("string", sentence);
         Log.d("char", currentCharacter);
     }
 
