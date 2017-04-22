@@ -18,19 +18,33 @@ import android.widget.TextView;
 import android.telephony.SmsManager;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
-public class MainActivity extends AppCompatActivity implements View.OnTouchListener {
+public class MainActivity extends AppCompatActivity implements View.OnTouchListener{
     private static final int REQUEST_EXAMPLE = 0;
 
     private Button morse_pad;
     private EditText message;
     private TextView phone_number;
 
+
+    // Timer related
+    private int nextWordTimeout = 1000;
+    private int nextCharacterTimeout = 500;
+    private int tracoTimeout = 200;
+    private long timeSpan;
+
+    private String sentence;
+    private String currentCharacter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        sentence = "";
+        currentCharacter = "";
 
         morse_pad = (Button) findViewById(R.id.morse_pad);
         message = (EditText) findViewById(R.id.message);
@@ -45,27 +59,36 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
     @Override
     public boolean onTouch(View arg0, MotionEvent arg1) {
-        final Timer timer = new Timer();
 
-        // Timeout para descobrir se usuário segurou o morse_pad por 2 segundos
-        // Se sim, abra a view de default_messages
-        switch ( arg1.getAction() ) {
-            case MotionEvent.ACTION_DOWN:
-                //start timer
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        showMessages();
-                    }
-                }, 2000);
-                return true;
-            case MotionEvent.ACTION_UP:
-                //stop timer
-                timer.cancel();
-                return true;
+        if (arg1.getAction() == MotionEvent.ACTION_DOWN) {
+            timeSpan = System.nanoTime();
+        } else if (arg1.getAction() == MotionEvent.ACTION_UP){
+            // TODO: nao consigo extrair um valor que faça sentido desse timeSpan. O conversor
+            // não devolve um valor significativo no simulator
+            timeSpan = (System.nanoTime() - timeSpan);
+            long secondsElapsed = TimeUnit.SECONDS.convert(timeSpan, TimeUnit.SECONDS);
+            handleTimeSpan(secondsElapsed);
         }
-        return false;
 
+        return false;
+    }
+
+    private void handleTimeSpan(long span) {
+        if (span > nextWordTimeout){
+            sentence.concat(" ");
+        } else if (span > nextCharacterTimeout) {
+            // Chamada da funcao do ruhman
+            Log.d("Converter para romano:", currentCharacter);
+            String character = "a";
+            sentence.concat(character);
+        } else if (span > tracoTimeout) {
+            currentCharacter.concat("-");
+        } else { // dot
+            currentCharacter.concat(".");
+        }
+
+        Log.d("string", sentence);
+        Log.d("char", currentCharacter);
     }
 
     // Adiciona a mensagem padrão ao nosso formulário
