@@ -5,9 +5,9 @@ package sms;
  */
 
 public enum MorseTimeSpan {
-    WORD(1000),
-    CHARACTER(500),
-    TRACO(250);
+    WORD(2000),
+    CHARACTER(1000),
+    TRACO(400);
     private int timeSpan;
 
     private MorseTimeSpan(int value) {

@@ -19,7 +19,8 @@ import android.telephony.SmsManager;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
-
+import java.io.IOException;
+import java.io.InputStream;
 
 public class MainActivity extends AppCompatActivity implements View.OnTouchListener{
     private static final int REQUEST_EXAMPLE = 0;
@@ -41,8 +42,9 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Inicializa o conversor e as variaveis romanas
-        morseCoder = new MorseCoder();
+        // Inicializa o conversor
+        String encoding = LoadData("encodings.txt");
+        morseCoder = new MorseCoder(encoding);
         morseCoder.inOrderPrint();
         sentence = "";
         currentCharacter = "";
@@ -58,41 +60,64 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         }
     }
 
+    public String LoadData(String inFile) {
+        String tContents = "";
+
+        try {
+            InputStream stream = getResources().getAssets().open((inFile));
+
+            int size = stream.available();
+            byte[] buffer = new byte[size];
+            stream.read(buffer);
+            stream.close();
+            tContents = new String(buffer);
+        } catch (IOException e) {
+            // Handle exceptions here
+            Log.e("Error loading file", e.getLocalizedMessage());
+        }
+
+        return tContents;
+
+    }
+
     @Override
     public boolean onTouch(View arg0, MotionEvent arg1) {
-
+    double duration;
         if (arg1.getAction() == MotionEvent.ACTION_DOWN) {
-            timeSpan = System.nanoTime();
+            timeSpan = System.currentTimeMillis();
         } else if (arg1.getAction() == MotionEvent.ACTION_UP) {
-            // TODO: nao consigo extrair um valor que faça sentido desse timeSpan. O conversor
-            // não devolve um valor significativo no simulator
-            timeSpan = (System.nanoTime() - timeSpan);
-            long secondsElapsed = TimeUnit.SECONDS.convert(timeSpan, TimeUnit.SECONDS);
-            //handleTimeSpan(secondsElapsed);
-            handleTimeSpan(300);
-            handleTimeSpan(200);
-            handleTimeSpan(200);
-            handleTimeSpan(200);
-            handleTimeSpan(600);
+           duration = (System.currentTimeMillis() - timeSpan);
+            handleTimeSpan(duration);
         }
 
         return false;
     }
 
-    private void handleTimeSpan(long span) {
+    private void handleTimeSpan(double span) {
         if (span > MorseTimeSpan.WORD.getTime()){
             sentence = sentence.concat(" ");
         } else if (span > MorseTimeSpan.CHARACTER.getTime()) {
             String character = morseCoder.decode(currentCharacter);
+            Log.d("ds", character);
             sentence = sentence.concat(character);
+            currentCharacter = "";
         } else if (span > MorseTimeSpan.TRACO.getTime()) {
             currentCharacter = currentCharacter.concat("-");
         } else { // dot
             currentCharacter = currentCharacter.concat(".");
         }
 
-        // Precisa ser um "b"
+        message.setText(sentence, TextView.BufferType.NORMAL);
         Log.d("char", sentence);
+        Log.d("char", currentCharacter);
+    }
+
+    public void deleteChar(View v) {
+        String text = message.getText().toString();
+
+        if (text.length() > 0) {
+            message.setText(text.substring(0, text.length() - 1));
+        }
     }
 
     // Adiciona a mensagem padrão ao nosso formulário

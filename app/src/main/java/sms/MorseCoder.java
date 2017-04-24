@@ -10,30 +10,24 @@ import sms.MorseNode;
 public class MorseCoder{
 
     private MorseNode root;
+    private String encoding;
 
-    //Construtor
-    public MorseCoder() {
+    public MorseCoder(String encoding) {
         root = new MorseNode();
-        readTreeInfo();
+        this.encoding = encoding;
+//        readTreeInfo();
     }
 
-    //Le arvore do arquivo
-    private void readTreeInfo() {
-        Scanner input = null;
-        try {
-            input = new Scanner(new File("encodings.txt"));
-        } catch (FileNotFoundException exception) {
-            System.out.println("File not found!");
-        }
-
-        while (input.hasNextLine()) {
-            String data = input.nextLine().trim();
-            if (data.length() > 0) {
-                add(data.substring(1).trim(), data.charAt(0));
-            }
-        }
-        input.close();
-    }
+//    //Le arvore do arquivo
+//    private void readTreeInfo() {
+//        while (encoding.hasNextLine()) {
+//            String data = input.nextLine().trim();
+//            if (data.length() > 0) {
+//                add(data.substring(1).trim(), data.charAt(0));
+//            }
+//        }
+//        input.close();
+//    }
 
     //Add letra na arvore
     private void add(String mcode, char ltr) {
