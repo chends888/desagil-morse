@@ -132,10 +132,9 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             String character = morseCoder.decode(currentCharacter);
             sentence = sentence.concat(character);
             currentCharacter = "";
-            ((Vibrator)getSystemService(VIBRATOR_SERVICE)).vibrate(800);
         } else if (span > MorseTimeSpan.TRACO.getTime()) {
             currentCharacter = currentCharacter.concat("-");
-            ((Vibrator)getSystemService(VIBRATOR_SERVICE)).vibrate(500);
+            ((Vibrator)getSystemService(VIBRATOR_SERVICE)).vibrate(300);
         } else { // dot
             currentCharacter = currentCharacter.concat(".");
             ((Vibrator)getSystemService(VIBRATOR_SERVICE)).vibrate(100);
@@ -161,9 +160,11 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         }
 
         String text = desiredText.getText().toString();
+        currentCharacter = "";
 
         if (text.length() > 0) {
             desiredText.setText(text.substring(0, text.length() - 1));
+            sentence = sentence.substring(0, text.length() - 1);
         }
     }
 
@@ -201,6 +202,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             manager.sendTextMessage(to, null, message, null, null);
             Toast toast = Toast.makeText(this, "Messagem enviada!", Toast.LENGTH_SHORT);
             toast.show();
+            ((Vibrator)getSystemService(VIBRATOR_SERVICE)).vibrate(500);
         }
         catch(IllegalArgumentException exception) {
             Log.e("SendActivity", "number or message empty");
