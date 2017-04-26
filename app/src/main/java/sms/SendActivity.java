@@ -1,4 +1,3 @@
-
 package sms;
 import android.os.Bundle;
 import android.content.Intent;
@@ -74,8 +73,4 @@ public class SendActivity extends AppCompatActivity {
         Intent itNavegar = new Intent(Intent.ACTION_VIEW,uri);
         startActivity(itNavegar);
     }
-
-
-
-
 }
