@@ -1,9 +1,11 @@
 package sms;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.renderscript.Byte2;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -11,11 +13,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.telephony.SmsManager;
+
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -28,14 +32,15 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private EditText message;
     private TextView phone_number;
 
+    private boolean can_vibrate = false;
 
     // Morse related
     private long timeSpan;
     private MorseCoder morseCoder;
 
-    private String sentence;
-    private String currentCharacter;
-    private boolean isEditingPhoneNumber;
+    private String sentence = "";
+    private String currentCharacter = "";
+    private boolean isEditingPhoneNumber = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +51,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         String encoding = LoadData("encodings.txt");
         morseCoder = new MorseCoder(encoding);
         morseCoder.inOrderPrint();
-        sentence = "";
-        currentCharacter = "";
-        isEditingPhoneNumber = false;
 
         Button morse_pad = (Button) findViewById(R.id.morse_pad);
         morse_pad.setOnTouchListener(this);
@@ -60,6 +62,9 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         if (getIntent().getStringExtra("message") != null) {
             addMessageToForm(getIntent().getStringExtra("message"));
         }
+
+        // Veja se pode vibrar
+        checkVibratePermission();
     }
 
     /**
@@ -87,9 +92,18 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
     }
 
+    private void checkVibratePermission() {
+        int permission = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.VIBRATE);
+
+        if(permission == PackageManager.PERMISSION_GRANTED) {
+            can_vibrate = true;
+        }
+    }
+
     @Override
     public boolean onTouch(View arg0, MotionEvent arg1) {
-    double duration;
+        double duration;
+
         if (arg1.getAction() == MotionEvent.ACTION_DOWN) {
             timeSpan = System.currentTimeMillis();
         } else if (arg1.getAction() == MotionEvent.ACTION_UP) {
@@ -118,10 +132,14 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             String character = morseCoder.decode(currentCharacter);
             sentence = sentence.concat(character);
             currentCharacter = "";
+            ((Vibrator)getSystemService(VIBRATOR_SERVICE)).vibrate(800);
         } else if (span > MorseTimeSpan.TRACO.getTime()) {
             currentCharacter = currentCharacter.concat("-");
+            ((Vibrator)getSystemService(VIBRATOR_SERVICE)).vibrate(500);
         } else { // dot
             currentCharacter = currentCharacter.concat(".");
+            ((Vibrator)getSystemService(VIBRATOR_SERVICE)).vibrate(100);
+
         }
 
         if (isEditingPhoneNumber){
@@ -173,7 +191,12 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         String to = phone_number.getText().toString();
         String message = this.message.getText().toString();
 
+        if (to.length() == 0 || message.length() == 0){
+            return;
+        }
+
         SmsManager manager = SmsManager.getDefault();
+
         try {
             manager.sendTextMessage(to, null, message, null, null);
             Toast toast = Toast.makeText(this, "Messagem enviada!", Toast.LENGTH_SHORT);
@@ -186,6 +209,12 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
 
     public void tryToSendSMS(View view) {
+        // Check if no view has focus:
+        View currentFocus = this.getCurrentFocus();
+        if (currentFocus!= null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
 
         int permission = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.SEND_SMS);
 
