@@ -10,6 +10,7 @@ public class MorseNode {
     private MorseNode left;
     private MorseNode right;
     public static final char EMPTY = ' ';
+    private boolean open = true;
 
     public MorseNode() {
         letter = EMPTY;
@@ -42,4 +43,11 @@ public class MorseNode {
         this.right = right;
     }
 
+    public boolean isOpen() {
+        return open;
+    }
+
+    public void setOpen(boolean open) {
+        this.open = open;
+    }
 }
