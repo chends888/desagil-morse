@@ -104,33 +104,38 @@ public class MorseCoder{
     }
 
 
-    //Ficou para a proxima Sprint
-//    public String encode(String str) {
-//        MorseNode current = root;
-//        String result = "";
-//        String s = "";
-//        char ltr;
-//
-//        for (int i = 0; i < str.length(); i++) {
-//            ltr = str.charAt(i);
-//            result = searchTree(current, ltr, s);
-//        }
-//        return result;
-//    }
-//
-//    public String searchTree(MorseNode current, char ltr, String s) {
-//        char temp = current.getLetter();  //for debugging purposes
-//
-//        if (current.getLetter() == ltr) {
-//            return s;
-//        } else {
-//            if (current.getLeft() != null) {
-//                return searchTree(current.getLeft(), ltr, s + ".");
-//            }
-//            if (current.getRight() != null) {
-//                return searchTree(current.getRight(), ltr, s + "-");
-//            }
-//            return s;
-//        }
-//    }
+    public String encode(char ltr) {
+        MorseNode current = root;
+        if (current != null) {
+            String s = "";
+            Stack<MorseNode> stack = new Stack<>();
+            stack.push(current);
+
+            while(!stack.isEmpty()) {
+                MorseNode node = stack.peek();
+                MorseNode left = node.getLeft();
+                MorseNode right = node.getRight();
+                if (node.getLetter() == ltr) {
+                    return s;
+                }
+                else if(left != null && left.isOpen()) {
+                    s = s + ".";
+                    left.setOpen(false);
+                    stack.push(left);
+                }
+                else if(right != null && right.isOpen()) {
+                    s = s + "-";
+                    right.setOpen(false);
+                    stack.push(right);
+                }
+                else {
+                    stack.pop();
+                    if (!s.isEmpty()){
+                        s = s.substring(0, (s.length() - 1));
+                    }
+                }
+            }
+            return s;
+        }return null;
+    }
 }
