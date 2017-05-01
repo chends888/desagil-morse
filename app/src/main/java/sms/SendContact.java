@@ -1,7 +1,6 @@
 package sms;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -14,31 +13,26 @@ import java.util.List;
 
 
 public class SendContact extends AppCompatActivity {
-    List<String> opcoes;
+    List<String> contacts;
     ArrayAdapter<String> adaptador;
-    ListView lvOpcoes;
+    ListView lvContacts;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_send);
+        setContentView(R.layout.activity_contact);
 
-        lvOpcoes = (ListView) findViewById(R.id.default_messages);
+        lvContacts = (ListView) findViewById(R.id.default_messages);
 
-        opcoes = new ArrayList<String>();
-
-        opcoes.add("Banheiro por favor");
-        opcoes.add("Comida por favor");
-        opcoes.add("Agua por favor");
-        opcoes.add("Estou com dor");
-        opcoes.add("Emergencia");
-        opcoes.add("Preciso de ajuda");
-
-        adaptador = new ArrayAdapter<String>(SendContact.this, android.R.layout.simple_list_item_1, opcoes);
-        lvOpcoes.setAdapter(adaptador);
-        lvOpcoes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        contacts = new ArrayList<String>();
+        for(int number=0,number < READ_CONTACT, number++){
+            contacts.add(number);
+        }
+        adaptador = new ArrayAdapter<String>(SendContact.this, android.R.layout.simple_list_item_1, contacts);
+        lvContacts.setAdapter(adaptador);
+        lvContacts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                handleListItemClick((String) lvOpcoes.getItemAtPosition(position));
+                handleListItemClick((String) lvContacts.getItemAtPosition(position));
             };
         });
     }
