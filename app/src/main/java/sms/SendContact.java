@@ -21,7 +21,7 @@ public class SendContact extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact);
 
-        lvContacts = (ListView) findViewById(R.id.default_messages);
+        lvContacts = (ListView) findViewById(R.id.phone_number);
 
         contacts = new ArrayList<String>();
         for(int number=0,number < READ_CONTACT, number++){
