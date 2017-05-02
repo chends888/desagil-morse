@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private EditText message;
     private TextView phone_number;
     private TextView morse_hint;
+    private Button contacts;
 
     private boolean can_vibrate = false;
     private boolean isEditingPhoneNumber = false;
@@ -92,6 +93,13 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             }
         });
 
+        contacts = (Button) findViewById(R.id.contatos);
+        contacts.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                showContact();
+            }
+        });
+
 
         // Se há uma mensagem padrão selecionada
         if (getIntent().getStringExtra("message") != null) {
@@ -102,6 +110,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         // Veja se pode vibrar
         checkVibratePermission();
     }
+
+
     public void create_dictionary(MorseCoder arvore){
         dictionary.add(arvore.root);
         MorseNode root = arvore.root;
@@ -226,11 +236,13 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         this.message.setText(message);
     }
 
-    public void showMessages() {
-        Intent intent = new Intent(this, SendActivity.class);
+
+    public void showContact() {
+        Intent intent = new Intent(this, SendContact.class);
         startActivity(intent);
         finish();
     }
+
 
     public void goToSendActivity() {
         Intent intent = new Intent(this, SendActivity.class);
