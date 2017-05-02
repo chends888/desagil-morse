@@ -35,7 +35,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private static final int REQUEST_EXAMPLE = 0;
 
     private Button morse_pad;
-    private Button sendbutton;
+    private Button send_button;
+    private Button space_button;
     private EditText message;
     private TextView phone_number;
     private TextView morse_hint;
@@ -73,11 +74,16 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
         morse_pad = (Button) findViewById(R.id.morse_pad);
         message = (EditText) findViewById(R.id.message);
-        sendbutton = (Button) findViewById(R.id.button);
+
         phone_number = (TextView) findViewById(R.id.phone_number);
         morse_hint = (TextView) findViewById(R.id.morsehint);
         morse_pad.setOnTouchListener(this);
-        sendbutton.setOnLongClickListener(new OnLongClickListener() {
+
+        space_button = (Button) findViewById(R.id.space);
+        space_button.setOnClickListener(handleSpace);
+
+        send_button = (Button) findViewById(R.id.button);
+        send_button.setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 // TODO Auto-generated method stub
@@ -158,13 +164,23 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         return false;
     }
 
-    private void handleTimeSpan(double span) {
-        if (span > MorseTimeSpan.WORD.getTime()){
-            sentence = sentence.concat(" ");
-        } else if (span > MorseTimeSpan.CHARACTER.getTime()) {
+    // Lida com o botão de espaço
+    View.OnClickListener handleSpace = new View.OnClickListener() {
+        public void onClick(View v) {
             String character = morseCoder.decode(currentCharacter);
-            Log.d("ds", currentCharacter);
-            Log.d("ds", character);
+            sentence = sentence.concat(character);
+            currentCharacter = "";
+
+            sentence = sentence.concat(" ");
+
+            message.setText(sentence, TextView.BufferType.NORMAL);
+            morse_hint.setText(currentCharacter);
+        }
+    };
+
+    private void handleTimeSpan(double span) {
+        if (span > MorseTimeSpan.CHARACTER.getTime()) {
+            String character = morseCoder.decode(currentCharacter);
             sentence = sentence.concat(character);
             currentCharacter = "";
         } else if (span > MorseTimeSpan.TRACO.getTime()) {
@@ -177,7 +193,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         }
 
         message.setText(sentence, TextView.BufferType.NORMAL);
-        Log.d("char", sentence);
         morse_hint.setText(currentCharacter);
     }
 
