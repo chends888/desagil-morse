@@ -19,44 +19,73 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.telephony.SmsManager;
+import android.view.View.OnLongClickListener;
+
+import org.w3c.dom.Text;
 
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnTouchListener{
     private static final int REQUEST_EXAMPLE = 0;
 
+    private Button morse_pad;
+    private Button sendbutton;
     private EditText message;
     private TextView phone_number;
+    private TextView morse_hint;
 
     private boolean can_vibrate = false;
+    private boolean isEditingPhoneNumber = false;
 
-    // Morse related
+
+    private List<MorseNode> queue;
+    private List<MorseNode> dictionary;
+    // Timer related
     private long timeSpan;
     private MorseCoder morseCoder;
 
-    private String sentence = "";
-    private String currentCharacter = "";
-    private boolean isEditingPhoneNumber = false;
+    private String sentence;
+    private String currentCharacter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+//        queue = new ArrayList<MorseNode>();
+//        dictionary = new ArrayList<MorseNode>();
+
         // Inicializa o conversor
         String encoding = LoadData("encodings.txt");
         morseCoder = new MorseCoder(encoding);
+//        create_dictionary(morseCoder);
         morseCoder.inOrderPrint();
 
-        Button morse_pad = (Button) findViewById(R.id.morse_pad);
-        morse_pad.setOnTouchListener(this);
+        sentence = "";
+        currentCharacter = "";
 
+        morse_pad = (Button) findViewById(R.id.morse_pad);
         message = (EditText) findViewById(R.id.message);
+        sendbutton = (Button) findViewById(R.id.button);
         phone_number = (TextView) findViewById(R.id.phone_number);
+        morse_hint = (TextView) findViewById(R.id.morsehint);
+        morse_pad.setOnTouchListener(this);
+        sendbutton.setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                // TODO Auto-generated method stub
+                goToSendActivity();
+                return true;
+            }
+        });
+
 
         // Se há uma mensagem padrão selecionada
         if (getIntent().getStringExtra("message") != null) {
@@ -66,17 +95,32 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         // Veja se pode vibrar
         checkVibratePermission();
     }
+    public void create_dictionary(MorseCoder arvore){
+        dictionary.add(arvore.root);
+        MorseNode root = arvore.root;
+        while (true){
+            if(root.getLeft()!=null){
+                queue.add(root.getLeft());
+            }
+            if(root.getRight()!=null){
+                queue.add(root.getRight());
+            }
+            if(!dictionary.contains(queue.get(0))){
+                dictionary.add(queue.get(0));
+            }
+            root = queue.get(0);
+            queue.remove(0);
+            if(queue.size() ==0){
+                break;
+            }
+        }
 
-    /**
-     * Carrega um arquivo de texto da pasta de assets
-     * @param path - localização do arquvio
-     * @return string do arquivo
-     */
-    public String LoadData(String path) {
+    }
+    public String LoadData(String inFile) {
         String tContents = "";
 
         try {
-            InputStream stream = getResources().getAssets().open((path));
+            InputStream stream = getResources().getAssets().open((inFile));
 
             int size = stream.available();
             byte[] buffer = new byte[size];
@@ -114,22 +158,13 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         return false;
     }
 
-    /**
-     * Decide se usuário digitou um ponto, um traço ou um caracter
-     * @param span - duração em milisegundos do clique
-     */
     private void handleTimeSpan(double span) {
         if (span > MorseTimeSpan.WORD.getTime()){
-            // Caso do usuario dar espaço sem ter traduzido o caracter
-            // Queremos fazer isso para ele
-            if (currentCharacter != "") {
-                String character = morseCoder.decode(currentCharacter);
-                sentence = sentence.concat(character);
-                currentCharacter = "";
-            }
             sentence = sentence.concat(" ");
         } else if (span > MorseTimeSpan.CHARACTER.getTime()) {
             String character = morseCoder.decode(currentCharacter);
+            Log.d("ds", currentCharacter);
+            Log.d("ds", character);
             sentence = sentence.concat(character);
             currentCharacter = "";
         } else if (span > MorseTimeSpan.TRACO.getTime()) {
@@ -141,14 +176,9 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
         }
 
-        if (isEditingPhoneNumber){
-            phone_number.setText(sentence, TextView.BufferType.NORMAL);
-        } else {
-            message.setText(sentence, TextView.BufferType.NORMAL);
-        }
-
-        // TODO: set current character to special view
-        Log.d("char", currentCharacter);
+        message.setText(sentence, TextView.BufferType.NORMAL);
+        Log.d("char", sentence);
+        morse_hint.setText(currentCharacter);
     }
 
     public void deleteChar(View v) {
@@ -161,6 +191,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
         String text = desiredText.getText().toString();
         currentCharacter = "";
+        morse_hint.setText("");
 
         if (text.length() > 0) {
             desiredText.setText(text.substring(0, text.length() - 1));
@@ -168,10 +199,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         }
     }
 
-    /**
-     * Adiciona a mensagem padrão no Text View
-     * @param message - mensagem a ser adicionada
-     */
+    // Adiciona a mensagem padrão ao nosso formulário
     private void addMessageToForm (String message) {
         this.message.setText(message);
     }
@@ -200,6 +228,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
         try {
             manager.sendTextMessage(to, null, message, null, null);
+
             Toast toast = Toast.makeText(this, "Messagem enviada!", Toast.LENGTH_SHORT);
             toast.show();
             ((Vibrator)getSystemService(VIBRATOR_SERVICE)).vibrate(500);
@@ -208,6 +237,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             Log.e("SendActivity", "number or message empty");
         }
     }
+
 
 
     public void tryToSendSMS(View view) {
@@ -243,6 +273,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             }
         }
     }
+
+
 
 
 }
