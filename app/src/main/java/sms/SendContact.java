@@ -1,47 +1,46 @@
 package sms;
 
-import android.content.Intent;
+
+import android.annotation.SuppressLint;
+import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.provider.ContactsContract;
+import android.support.v4.app.Fragment;
+import android.support.v4.widget.SimpleCursorAdapter;
+import android.widget.AdapterView;
+import android.net.Uri;
+import android.view.View;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
 
-import java.util.ArrayList;
-import java.util.List;
+public abstract class SendContact extends AppCompatActivity,Fragment implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener{
+    ListView ContactsList;
+    long ContactId;
+    String ContactKey;
+    Uri ContactUri;
+    private SimpleCursorAdapter CursorAdapter;
 
-
-public class SendContact extends AppCompatActivity {
-    List<String> contacts;
-    ArrayAdapter<String> adaptador;
-    ListView lvContacts;
+    @SuppressLint("InlinedApi")
+    private final static String[] FROM_COLUMNS = {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
+                    ContactsContract.Contacts.DISPLAY_NAME_PRIMARY :
+                    ContactsContract.Contacts.DISPLAY_NAME
+    };
+    private final static int[] TO_IDS = {
+            android.R.id.text1
+    };
+    public SendContact() {}
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_contact);
-
-        lvContacts = (ListView) findViewById(R.id.phone_number);
-
-        contacts = new ArrayList<String>();
-        for(int number=0,number < READ_CONTACT, number++){
-            contacts.add(number);
-        }
-        adaptador = new ArrayAdapter<String>(SendContact.this, android.R.layout.simple_list_item_1, contacts);
-        lvContacts.setAdapter(adaptador);
-        lvContacts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                handleListItemClick((String) lvContacts.getItemAtPosition(position));
-            };
-        });
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the fragment layout
+        return inflater.inflate(R.layout.contact_list_fragment, container, false);
     }
-
-    private void handleListItemClick(String messageParam) {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("message",messageParam);
-        startActivity(intent);
-        finish();
+    public void onActivityCreated(Bundle savedInstanceState) {
+        ContactsList.setOnItemClickListener(this);
     }
-
 }

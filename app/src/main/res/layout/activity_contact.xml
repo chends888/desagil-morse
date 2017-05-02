@@ -12,7 +12,7 @@
     tools:context="sms.SendContact"
     android:layout_centerInParent="true">
 
-    <ListView
+    <TextView
         android:id="@+id/contact_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -20,6 +20,7 @@
         android:layout_alignParentStart="true"
         android:layout_marginTop="350dp"
         android:layout_marginBottom="100dp"
+        android:clickable="true"
         />
 
 </RelativeLayout>
