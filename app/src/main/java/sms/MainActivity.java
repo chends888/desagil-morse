@@ -16,56 +16,144 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.telephony.SmsManager;
+import android.view.View.OnLongClickListener;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements View.OnTouchListener {
+public class MainActivity extends AppCompatActivity implements View.OnTouchListener{
     private static final int REQUEST_EXAMPLE = 0;
 
     private Button morse_pad;
     private EditText message;
     private TextView phone_number;
+    private Button sendbutton;
+    private List<MorseNode> queue;
+    private List<MorseNode> dictionary;
+    // Timer related
+    private long timeSpan;
+    private MorseCoder morseCoder;
+
+    private String sentence;
+    private String currentCharacter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        queue = new ArrayList<MorseNode>();
+        dictionary = new ArrayList<MorseNode>();
+        // Inicializa o conversor
+        String encoding = LoadData("encodings.txt");
+        morseCoder = new MorseCoder(encoding);
+        create_dictionary(morseCoder);
+        morseCoder.inOrderPrint();
+        sentence = "";
+        currentCharacter = "";
 
         morse_pad = (Button) findViewById(R.id.morse_pad);
         message = (EditText) findViewById(R.id.message);
+        sendbutton = (Button) findViewById(R.id.button);
         phone_number = (TextView) findViewById(R.id.phone_number);
         morse_pad.setOnTouchListener(this);
+        sendbutton.setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                // TODO Auto-generated method stub
+                goToSendActivity();
+                return true;
+            }
+        });
+
 
         // Se há uma mensagem padrão selecionada
         if (getIntent().getStringExtra("message") != null) {
             addMessageToForm(getIntent().getStringExtra("message"));
         }
     }
+    public void create_dictionary(MorseCoder arvore){
+        dictionary.add(arvore.root);
+        MorseNode root = arvore.root;
+        while (true){
+            if(root.getLeft()!=null){
+                queue.add(root.getLeft());
+            }
+            if(root.getRight()!=null){
+                queue.add(root.getRight());
+            }
+            if(!dictionary.contains(queue.get(0))){
+                dictionary.add(queue.get(0));
+            }
+            root = queue.get(0);
+            queue.remove(0);
+            if(queue.size() ==0){
+                break;
+            }
+        }
+
+    }
+    public String LoadData(String inFile) {
+        String tContents = "";
+
+        try {
+            InputStream stream = getResources().getAssets().open((inFile));
+
+            int size = stream.available();
+            byte[] buffer = new byte[size];
+            stream.read(buffer);
+            stream.close();
+            tContents = new String(buffer);
+        } catch (IOException e) {
+            // Handle exceptions here
+            Log.e("Error loading file", e.getLocalizedMessage());
+        }
+
+        return tContents;
+
+    }
 
     @Override
     public boolean onTouch(View arg0, MotionEvent arg1) {
-        final Timer timer = new Timer();
-
-        // Timeout para descobrir se usuário segurou o morse_pad por 2 segundos
-        // Se sim, abra a view de default_messages
-        switch ( arg1.getAction() ) {
-            case MotionEvent.ACTION_DOWN:
-                //start timer
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        showMessages();
-                    }
-                }, 2000);
-                return true;
-            case MotionEvent.ACTION_UP:
-                //stop timer
-                timer.cancel();
-                return true;
+    double duration;
+        if (arg1.getAction() == MotionEvent.ACTION_DOWN) {
+            timeSpan = System.currentTimeMillis();
+        } else if (arg1.getAction() == MotionEvent.ACTION_UP) {
+           duration = (System.currentTimeMillis() - timeSpan);
+            handleTimeSpan(duration);
         }
-        return false;
 
+        return false;
+    }
+
+    private void handleTimeSpan(double span) {
+        if (span > MorseTimeSpan.WORD.getTime()){
+            sentence = sentence.concat(" ");
+        } else if (span > MorseTimeSpan.CHARACTER.getTime()) {
+            String character = morseCoder.decode(currentCharacter);
+            Log.d("ds", character);
+            sentence = sentence.concat(character);
+            currentCharacter = "";
+        } else if (span > MorseTimeSpan.TRACO.getTime()) {
+            currentCharacter = currentCharacter.concat("-");
+        } else { // dot
+            currentCharacter = currentCharacter.concat(".");
+        }
+
+        message.setText(sentence, TextView.BufferType.NORMAL);
+        Log.d("char", sentence);
+        Log.d("char", currentCharacter);
+    }
+
+    public void deleteChar(View v) {
+        String text = message.getText().toString();
+
+        if (text.length() > 0) {
+            message.setText(text.substring(0, text.length() - 1));
+        }
     }
 
     // Adiciona a mensagem padrão ao nosso formulário
@@ -102,6 +190,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
 
+
     public void tryToSendSMS(View view) {
 
         int permission = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.SEND_SMS);
@@ -129,6 +218,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             }
         }
     }
+
+
 
 
 }
