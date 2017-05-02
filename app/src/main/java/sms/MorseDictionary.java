@@ -7,7 +7,7 @@ package sms;
 public class MorseDictionary {
 
     public MorseDictionary(){
-        arvore = MorseCoder.ro
+//        arvore = MorseCoder.ro
     }
 
 
