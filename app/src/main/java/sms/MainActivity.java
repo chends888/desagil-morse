@@ -96,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         // Se há uma mensagem padrão selecionada
         if (getIntent().getStringExtra("message") != null) {
             addMessageToForm(getIntent().getStringExtra("message"));
+            isEditingPhoneNumber = true;
         }
 
         // Veja se pode vibrar
@@ -192,7 +193,13 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
         }
 
-        message.setText(sentence, TextView.BufferType.NORMAL);
+        TextView desiredText;
+        if (isEditingPhoneNumber){
+            desiredText = phone_number;
+        } else {
+            desiredText = message;
+        }
+        desiredText.setText(sentence, TextView.BufferType.NORMAL);
         morse_hint.setText(currentCharacter);
     }
 
@@ -235,7 +242,14 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         String to = phone_number.getText().toString();
         String message = this.message.getText().toString();
 
-        if (to.length() == 0 || message.length() == 0){
+        // Focus on the appropriate field
+        if (message.length() == 0){
+            isEditingPhoneNumber = false;
+            sentence = "";
+            return;
+        } else if (to.length() == 0) {
+            isEditingPhoneNumber = true;
+            sentence = "";
             return;
         }
 
