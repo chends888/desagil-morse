@@ -75,23 +75,62 @@
         android:layout_centerHorizontal="true" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/space"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="enviar"
-        android:width="150dp"
+        android:text="'      '"
+        android:width="30dp"
         android:height="68dp"
         android:rotation="-45"
         android:background="@android:drawable/dialog_holo_light_frame"
         android:textColor="#fff"
         android:backgroundTint="@color/colorPrimary"
-        android:layout_marginLeft="30dp"
-        android:layout_marginStart="30dp"
         android:onClick="tryToSendSMS"
-        android:layout_below="@+id/message"
+        android:layout_marginLeft="27dp"
+        android:layout_marginStart="27dp"
+        android:layout_alignTop="@+id/morse_pad"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="30dp" />
+        android:layout_alignParentStart="true" />
+
+    <Button
+
+        android:id="@+id/backspaceb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="excluir"
+        android:width="30dp"
+        android:height="68dp"
+        android:rotation="-45"
+        android:background="@android:drawable/dialog_holo_light_frame"
+        android:textColor="#fff"
+        android:backgroundTint="@color/colorPrimary"
+        android:layout_marginLeft="17dp"
+        android:layout_marginStart="17dp"
+        android:onClick="deleteChar"
+
+        android:layout_alignBaseline="@+id/button"
+        android:layout_alignBottom="@+id/button"
+        android:layout_alignLeft="@+id/editText"
+        android:layout_alignStart="@+id/editText" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="enviar"
+        android:longClickable="true"
+        android:width="70dp"
+        android:height="68dp"
+        android:rotation="45"
+        android:onClick="tryToSendSMS"
+        android:background="@android:drawable/dialog_holo_light_frame"
+        android:textColor="#fff"
+        android:backgroundTint="@color/colorPrimary"
+        android:layout_marginLeft="29dp"
+        android:layout_marginStart="29dp"
+        android:layout_below="@+id/message"
+        android:layout_toRightOf="@+id/space"
+        android:layout_toEndOf="@+id/space" />
 
     <Button
         android:id="@+id/contatos"
@@ -104,29 +143,26 @@
         android:background="@android:drawable/dialog_holo_light_frame"
         android:textColor="#fff"
         android:backgroundTint="@color/colorPrimary"
-        android:layout_marginRight="28dp"
-        android:layout_marginEnd="28dp"
-        android:layout_below="@+id/backspaceb"
+        android:layout_marginRight="21dp"
+        android:layout_marginEnd="21dp"
+        android:layout_alignTop="@+id/morse_pad"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
-    <Button
-        android:id="@+id/backspaceb"
+    <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="excluir"
-        android:width="70dp"
-        android:height="68dp"
-        android:rotation="45"
-        android:onClick="deleteChar"
-        android:background="@android:drawable/dialog_holo_light_frame"
-        android:textColor="#fff"
-        android:backgroundTint="@color/colorPrimary"
+        android:inputType="textPersonName"
+        android:hint="morse"
+        android:ems="10"
+        android:background="#fff"
+        android:id="@+id/morsehint"
         android:layout_below="@+id/message"
-        android:layout_alignRight="@+id/contatos"
-        android:layout_alignEnd="@+id/contatos"
-        android:layout_marginRight="62dp"
-        android:layout_marginEnd="62dp" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="8dp"
+        android:layout_toRightOf="@+id/morse_pad"
+        android:layout_toEndOf="@+id/morse_pad" />
 
 
 </RelativeLayout>

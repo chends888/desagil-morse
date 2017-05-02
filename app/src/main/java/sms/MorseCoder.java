@@ -9,27 +9,25 @@ import sms.MorseNode;
 
 public class MorseCoder{
 
-    static private MorseNode root;
+    protected MorseNode root;
+    private String encoding;
 
     public MorseCoder(String encoding) {
         root = new MorseNode();
-        readTreeInfo(encoding);
+        this.encoding = encoding;
+//        readTreeInfo();
     }
 
-    public MorseCoder() {
-    }
-
-    //Le arvore do arquivo
-    private void readTreeInfo(String input) {
-        Scanner input2 = new Scanner(input);
-        while (input2.hasNextLine()) {
-            String data = input2.nextLine().trim();
-            if (data.length() > 0) {
-                add(data.substring(1).trim(), data.charAt(0));
-            }
-        }
-        input2.close();
-    }
+//    //Le arvore do arquivo
+//    private void readTreeInfo() {
+//        while (encoding.hasNextLine()) {
+//            String data = input.nextLine().trim();
+//            if (data.length() > 0) {
+//                add(data.substring(1).trim(), data.charAt(0));
+//            }
+//        }
+//        input.close();
+//    }
 
     //Add letra na arvore
     private void add(String mcode, char ltr) {
