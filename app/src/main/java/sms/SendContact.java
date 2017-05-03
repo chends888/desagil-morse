@@ -17,15 +17,13 @@ import static sms.R.id.phone_number;
 public class SendContact extends AppCompatActivity {
     final int PICK_CONTACT = 2015;
     TextView contact_list;
-    String caregiver_number;
-    public static String numero;
+    private static String numero;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact);
 
-        caregiver_number = "11940388041";
 
 
         contact_list = (TextView) findViewById(R.id.contact_list);

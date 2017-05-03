@@ -47,14 +47,12 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private Button space_button;
     private EditText message;
 
-    private EditText phone_number;
-    public String caregiver_number;
+    private static EditText phone_number;
     public final int PICK_CONTACT = 2015;
-    private String numero;
+    private static String numero;
 
 
     private TextView morse_hint;
-    private Button contacts;
 
     private boolean can_vibrate = false;
     private boolean isEditingPhoneNumber = false;
