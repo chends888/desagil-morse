@@ -9,11 +9,16 @@ import android.os.Vibrator;
 import android.renderscript.Byte2;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.Button;
 import android.widget.EditText;
@@ -46,14 +51,18 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private boolean isEditingPhoneNumber = false;
 
 
-    private List<MorseNode> queue;
-    private List<MorseNode> dictionary;
     // Timer related
     private long timeSpan;
     private MorseCoder morseCoder;
-
     private String sentence;
     private String currentCharacter;
+
+    private ListView mDrawerList;
+    private DrawerLayout mDrawerLayout;
+    private ArrayAdapter<String> mAdapter;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private String mActivityTitle;
+
 
 
     @Override
@@ -67,9 +76,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         // Inicializa o conversor
         String encoding = LoadData("encodings.txt");
         morseCoder = new MorseCoder(encoding);
-//        create_dictionary(morseCoder);
         morseCoder.inOrderPrint();
-
         sentence = "";
         currentCharacter = "";
 
@@ -107,33 +114,42 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             addMessageToForm(getIntent().getStringExtra("message"));
             isEditingPhoneNumber = true;
         }
+        mDrawerList = (ListView)findViewById(R.id.navList);mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+        mActivityTitle = getTitle().toString();
 
+        addDrawerItems();
+        setupDrawer();
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
         // Veja se pode vibrar
         checkVibratePermission();
     }
 
 
-    public void create_dictionary(MorseCoder arvore){
+
+    public void create_dictionary(MorseCoder arvore) {
         dictionary.add(arvore.root);
         MorseNode root = arvore.root;
-        while (true){
-            if(root.getLeft()!=null){
+        while (true) {
+            if (root.getLeft() != null) {
                 queue.add(root.getLeft());
             }
-            if(root.getRight()!=null){
+            if (root.getRight() != null) {
                 queue.add(root.getRight());
             }
-            if(!dictionary.contains(queue.get(0))){
+            if (!dictionary.contains(queue.get(0))) {
                 dictionary.add(queue.get(0));
             }
             root = queue.get(0);
             queue.remove(0);
-            if(queue.size() ==0){
+            if (queue.size() == 0) {
                 break;
             }
         }
-
     }
+
+
     public String LoadData(String inFile) {
         String tContents = "";
 
@@ -238,11 +254,13 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
 
+
     public void showContact() {
         Intent intent = new Intent(this, SendContact.class);
         startActivity(intent);
         finish();
     }
+
 
 
     public void goToSendActivity() {
@@ -301,6 +319,56 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             permissions[0] = Manifest.permission.SEND_SMS;
             ActivityCompat.requestPermissions(MainActivity.this, permissions, REQUEST_EXAMPLE);
         }
+    }
+    private void addDrawerItems() {
+        List<String> morselist = new ArrayList<String>();
+        String words = new String("abcdefghijklmnopqrstuvwxyz0123456789");
+
+        ArrayList<Character> alphabetlist = new ArrayList<Character>();
+
+        for(int j = 0; j<words.length(); j++) {
+            alphabetlist.add(words.charAt(j));
+        }
+        for (char i : alphabetlist) {
+            morselist.add(morseCoder.encode(i));
+        }
+        List<String> romanomorsedic = new ArrayList<String>();
+        List<String> dictionary = new ArrayList<String>();
+        //dictionary = morseCoder.create_dictionary();
+        for(int i =0;i<alphabetlist.size();i++){
+            romanomorsedic.add(alphabetlist.get(i).toString() + " -> " + morselist.get(i) + "          || " /*+ dictionary.get(i)*/);
+        }
+        mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, romanomorsedic);
+        mDrawerList.setAdapter(mAdapter);
+
+        mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(MainActivity.this, "Time for an upgrade!", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void setupDrawer() {
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close) {
+
+            /** Called when a drawer has settled in a completely open state. */
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                getSupportActionBar().setTitle("Navigation!");
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+
+            /** Called when a drawer has settled in a completely closed state. */
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                getSupportActionBar().setTitle(mActivityTitle);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+        };
+
+        mDrawerToggle.setDrawerIndicatorEnabled(true);
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
     }
 
 

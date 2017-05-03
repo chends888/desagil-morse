@@ -9,7 +9,9 @@ import sms.MorseNode;
 
 public class MorseCoder{
 
-    protected MorseNode root;
+    private List<MorseNode> queue;
+    private List<String> dictionary;
+    private MorseNode root;
 //    private String encoding;
 
     public MorseCoder(String encoding) {
@@ -54,6 +56,26 @@ public class MorseCoder{
             }
         }
         current.setLetter(ltr);
+    }
+    public List<String> create_dictionary(){
+        MorseNode current = root;
+        while (true){
+            if(current.getLeft()!=null){
+                queue.add(current.getLeft());
+            }
+            if(current.getRight()!=null){
+                queue.add(current.getRight());
+            }
+            if(!dictionary.contains(queue.get(0))){
+                dictionary.add( encode(queue.get(0).getLetter()) + " -> " + queue.get(0).getLetter());
+            }
+            current = queue.get(0);
+            queue.remove(0);
+            if(queue.size() ==0){
+                break;
+            }
+        }
+        return dictionary;
     }
 
     public void inOrderPrint() {
