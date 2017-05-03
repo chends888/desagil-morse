@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         message = (EditText) findViewById(R.id.message);
 
         phone_number = (EditText) findViewById(R.id.phone_number);
+        phone_number.setText("940388041");
 
         morse_hint = (TextView) findViewById(R.id.morsehint);
         morse_pad.setOnTouchListener(this);
