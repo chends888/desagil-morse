@@ -127,29 +127,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
 
-
-    public void create_dictionary(MorseCoder arvore) {
-        dictionary.add(arvore.root);
-        MorseNode root = arvore.root;
-        while (true) {
-            if (root.getLeft() != null) {
-                queue.add(root.getLeft());
-            }
-            if (root.getRight() != null) {
-                queue.add(root.getRight());
-            }
-            if (!dictionary.contains(queue.get(0))) {
-                dictionary.add(queue.get(0));
-            }
-            root = queue.get(0);
-            queue.remove(0);
-            if (queue.size() == 0) {
-                break;
-            }
-        }
-    }
-
-
+    
     public String LoadData(String inFile) {
         String tContents = "";
 
