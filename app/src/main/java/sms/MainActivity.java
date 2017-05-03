@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         message = (EditText) findViewById(R.id.message);
 
         phone_number = (TextView) findViewById(R.id.phone_number);
+
         morse_hint = (TextView) findViewById(R.id.morsehint);
         morse_pad.setOnTouchListener(this);
 
@@ -250,6 +251,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         finish();
     }
 
+
     public void sendSMS() {
         String to = phone_number.getText().toString();
         String message = this.message.getText().toString();
@@ -314,8 +316,4 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             }
         }
     }
-
-
-
-
 }

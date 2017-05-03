@@ -5,17 +5,20 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.provider.ContactsContract;
 import android.os.Bundle;
 import android.view.View;
+import static sms.R.id.phone_number;
 
 
 public class SendContact extends AppCompatActivity {
     final int PICK_CONTACT = 2015;
     TextView contact_list;
     String caregiver_number;
-    String numero;
+    public static String numero;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
