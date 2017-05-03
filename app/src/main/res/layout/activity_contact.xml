@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_send"
+    android:id="@+id/activity_contact"
     package="sms"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,17 +9,18 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="sms.SendActivity"
+    tools:context="sms.SendContact"
     android:layout_centerInParent="true">
 
-    <ListView
-        android:id="@+id/default_messages"
+    <TextView
+        android:id="@+id/contact_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="350dp"
         android:layout_marginBottom="100dp"
+        android:clickable="true"
         />
 
 </RelativeLayout>
