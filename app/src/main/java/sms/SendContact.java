@@ -40,6 +40,7 @@ public class SendContact extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         if (requestCode == PICK_CONTACT && resultCode == RESULT_OK) {
             Uri contactUri = data.getData();
             Cursor cursor = getContentResolver().query(contactUri, null, null, null, null);

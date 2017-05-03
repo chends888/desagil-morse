@@ -4,8 +4,11 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.provider.ContactsContract;
 import android.renderscript.Byte2;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -43,7 +46,13 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private Button send_button;
     private Button space_button;
     private EditText message;
-    private TextView phone_number;
+
+    private EditText phone_number;
+    public String caregiver_number;
+    public final int PICK_CONTACT = 2015;
+    private String numero;
+
+
     private TextView morse_hint;
     private Button contacts;
 
@@ -83,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         morse_pad = (Button) findViewById(R.id.morse_pad);
         message = (EditText) findViewById(R.id.message);
 
-        phone_number = (TextView) findViewById(R.id.phone_number);
+        phone_number = (EditText) findViewById(R.id.phone_number);
 
         morse_hint = (TextView) findViewById(R.id.morsehint);
         morse_pad.setOnTouchListener(this);
@@ -101,13 +110,13 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             }
         });
 
-        contacts = (Button) findViewById(R.id.contatos);
-        contacts.setOnClickListener(new View.OnClickListener() {
+        (findViewById(R.id.contatos)).setOnClickListener( new View.OnClickListener() {
+            @Override
             public void onClick(View v) {
-                showContact();
+                Intent i = new Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
+                startActivityForResult(i, PICK_CONTACT);
             }
         });
-
 
         // Se há uma mensagem padrão selecionada
         if (getIntent().getStringExtra("message") != null) {
@@ -127,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
 
-    
+
     public String LoadData(String inFile) {
         String tContents = "";
 
@@ -360,6 +369,18 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             else {
                 sendSMS();
             }
+        }
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PICK_CONTACT && resultCode == RESULT_OK) {
+            Uri contactUri = data.getData();
+            Cursor cursor = getContentResolver().query(contactUri, null, null, null, null);
+            cursor.moveToFirst();
+            int column = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+            numero = cursor.getString(column);
+            phone_number.setText(numero);
+
         }
     }
 }
