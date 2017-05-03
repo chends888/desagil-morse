@@ -1,22 +1,21 @@
 package sms;
 
 import android.content.Intent;
-import android.database.Cursor;
+
 import android.support.v7.app.AppCompatActivity;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.provider.ContactsContract;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+
 
 
 public class SendContact extends AppCompatActivity {
     String numero;
     ArrayAdapter<String> adaptador;
     final int PICK_CONTACT = 2015;
-    private TextView contact_list;
+    TextView contact_list;
     String caregiver_number;
 
     @Override
