@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private Button send_button;
     private Button space_button;
     private EditText message;
-
     private static EditText phone_number;
     public final int PICK_CONTACT = 2015;
     private static String numero;
@@ -63,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private MorseCoder morseCoder;
     private String sentence;
     private String currentCharacter;
-
+    private String encoding;
     private ListView mDrawerList;
     private DrawerLayout mDrawerLayout;
     private ArrayAdapter<String> mAdapter;
@@ -81,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 //        dictionary = new ArrayList<MorseNode>();
 
         // Inicializa o conversor
-        String encoding = LoadData("encodings.txt");
+        encoding = LoadData("encodings.txt");
         morseCoder = new MorseCoder(encoding);
         morseCoder.inOrderPrint();
         sentence = "";
@@ -323,9 +322,31 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
         List<String> romanomorsedic = new ArrayList<String>();
         List<String> dictionary = new ArrayList<String>();
-        dictionary = morseCoder.create_dictionary();
+        List<MorseNode> queue = new ArrayList<MorseNode>();
+        MorseNode current = morseCoder.root;
+
+        while (true){
+            if(current.getLeft()!=null){
+
+                queue.add(current.getLeft());
+            }
+            if(current.getRight()!=null){
+                queue.add(current.getRight());
+            }
+            if(queue.size() >0){
+                if(!dictionary.contains(queue.get(0))){
+                    dictionary.add( new MorseCoder(encoding).encode(queue.get(0).getLetter()) + "     " + queue.get(0).getLetter());
+                }
+                current = queue.get(0);
+                queue.remove(0);
+            }
+            if(queue.size() ==0){
+                break;
+            }
+        }
+        //dictionary = morseCoder.create_dictionary();
         for(int i =0;i<alphabetlist.size();i++){
-            romanomorsedic.add(alphabetlist.get(i).toString() + " -> " + morselist.get(i) + "          || " /*+ dictionary.get(i)*/);
+            romanomorsedic.add(alphabetlist.get(i).toString() + "      " + morselist.get(i) + "      ||    " + dictionary.get(i));
         }
         mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, romanomorsedic);
         mDrawerList.setAdapter(mAdapter);
@@ -344,7 +365,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             /** Called when a drawer has settled in a completely open state. */
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                getSupportActionBar().setTitle("Navigation!");
+                getSupportActionBar().setTitle("Dictionary");
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
 

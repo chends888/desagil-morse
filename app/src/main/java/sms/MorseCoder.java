@@ -13,7 +13,7 @@ public class MorseCoder{
 
     private List<MorseNode> queue;
     private List<String> dictionary;
-    private MorseNode root;
+    protected MorseNode root;
 //    private String encoding;
 
     public MorseCoder(String encoding) {
@@ -62,7 +62,9 @@ public class MorseCoder{
     public List<String> create_dictionary(){
         MorseNode current = this.root;
         while (true){
+            Log.i("print","aqui");
             if(current.getLeft()!=null){
+
                 queue.add(current.getLeft());
             }
             if(current.getRight()!=null){

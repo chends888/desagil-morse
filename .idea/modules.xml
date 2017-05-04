@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/desagil-morse.iml" filepath="$PROJECT_DIR$/desagil-morse.iml" />
       <module fileurl="file://$PROJECT_DIR$/desagil-morse.iml" filepath="$PROJECT_DIR$/desagil-morse.iml" />
       <module fileurl="file://$PROJECT_DIR$/desagil-morse-master.iml" filepath="$PROJECT_DIR$/desagil-morse-master.iml" />
       <module fileurl="file://$PROJECT_DIR$/morse2.iml" filepath="$PROJECT_DIR$/morse2.iml" />
