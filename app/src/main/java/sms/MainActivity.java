@@ -316,11 +316,14 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             alphabetlist.add(words.charAt(j));
         }
         for (char i : alphabetlist) {
-            morselist.add(morseCoder.encode(i));
-        }
+            String encoding = LoadData("encodings.txt");
+            MorseCoder mc = new MorseCoder(encoding);
+            morselist.add(mc.encode(i));
+            }
+
         List<String> romanomorsedic = new ArrayList<String>();
         List<String> dictionary = new ArrayList<String>();
-        //dictionary = morseCoder.create_dictionary();
+        dictionary = morseCoder.create_dictionary();
         for(int i =0;i<alphabetlist.size();i++){
             romanomorsedic.add(alphabetlist.get(i).toString() + " -> " + morselist.get(i) + "          || " /*+ dictionary.get(i)*/);
         }

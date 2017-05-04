@@ -1,4 +1,6 @@
 package sms;
+import android.util.Log;
+
 import java.io.*;
 import java.util.*;
 import sms.MorseNode;
@@ -58,7 +60,7 @@ public class MorseCoder{
         current.setLetter(ltr);
     }
     public List<String> create_dictionary(){
-        MorseNode current = root;
+        MorseNode current = this.root;
         while (true){
             if(current.getLeft()!=null){
                 queue.add(current.getLeft());
@@ -66,11 +68,13 @@ public class MorseCoder{
             if(current.getRight()!=null){
                 queue.add(current.getRight());
             }
-            if(!dictionary.contains(queue.get(0))){
-                dictionary.add( encode(queue.get(0).getLetter()) + " -> " + queue.get(0).getLetter());
+            if(queue.size() >0){
+                if(!dictionary.contains(queue.get(0))){
+                    dictionary.add( encode(queue.get(0).getLetter()) + " -> " + queue.get(0).getLetter());
+                }
+                current = queue.get(0);
+                queue.remove(0);
             }
-            current = queue.get(0);
-            queue.remove(0);
             if(queue.size() ==0){
                 break;
             }
