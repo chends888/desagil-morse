@@ -327,15 +327,17 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
         while (true){
             if(current.getLeft()!=null){
-
                 queue.add(current.getLeft());
             }
             if(current.getRight()!=null){
                 queue.add(current.getRight());
             }
-            if(queue.size() >0){
+            if(queue.size() >=0){
                 if(!dictionary.contains(queue.get(0))){
-                    dictionary.add( new MorseCoder(encoding).encode(queue.get(0).getLetter()) + "     " + queue.get(0).getLetter());
+                    if(Character.toString(queue.get(0).getLetter()).trim().length() >0 ){
+                        dictionary.add( new MorseCoder(encoding).encode(queue.get(0).getLetter()) + "     " + queue.get(0).getLetter());
+                    }
+
                 }
                 current = queue.get(0);
                 queue.remove(0);
@@ -350,13 +352,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         }
         mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, romanomorsedic);
         mDrawerList.setAdapter(mAdapter);
-
-        mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(MainActivity.this, "Time for an upgrade!", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     private void setupDrawer() {

@@ -62,9 +62,7 @@ public class MorseCoder{
     public List<String> create_dictionary(){
         MorseNode current = this.root;
         while (true){
-            Log.i("print","aqui");
             if(current.getLeft()!=null){
-
                 queue.add(current.getLeft());
             }
             if(current.getRight()!=null){
